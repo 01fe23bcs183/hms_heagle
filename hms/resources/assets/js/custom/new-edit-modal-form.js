@@ -5,6 +5,11 @@ window.newRecord = function (data, loadingButton, modalSelector = '#AddModal') {
         $(data.formSelector)[0]);
     loadingButton.attr('disabled', true);
 
+    // Clear previous errors before submitting
+    if (data.formSelector && typeof clearAllFieldErrors === 'function') {
+        clearAllFieldErrors(data.formSelector);
+    }
+
     $.ajax({
         url: data.url,
         type: data.type,
@@ -22,11 +27,13 @@ window.newRecord = function (data, loadingButton, modalSelector = '#AddModal') {
             }
         },
         error: function (result) {
-            displayErrorMessage(result.responseJSON.message)
             loadingButton.attr('disabled', false);
-            // loadingButton.attr('disabled', false);
-            // printErrorMessage('#validationErrorsBox', result);
-            // displayErrorMessage($('#validationErrorsBox').text())
+            // Use enhanced error handling with field-level validation
+            if (typeof handleAjaxValidationErrors === 'function') {
+                handleAjaxValidationErrors(result, data.formSelector);
+            } else {
+                displayErrorMessage(result.responseJSON.message);
+            }
         },
         complete: function () {
             loadingButton.button('reset');
@@ -39,6 +46,12 @@ window.editRecord = function (
     loadingButton.attr('disabled', true);
     let formData = (data.formSelector === '') ? data.formData : new FormData(
         $(data.formSelector)[0]);
+    
+    // Clear previous errors before submitting
+    if (data.formSelector && typeof clearAllFieldErrors === 'function') {
+        clearAllFieldErrors(data.formSelector);
+    }
+    
     $.ajax({
         url: data.url,
         type: data.type,
@@ -55,7 +68,12 @@ window.editRecord = function (
         },
         error: function (result) {
             loadingButton.attr('disabled', false);
-            UnprocessableInputError(result);
+            // Use enhanced error handling with field-level validation
+            if (typeof handleAjaxValidationErrors === 'function') {
+                handleAjaxValidationErrors(result, data.formSelector);
+            } else {
+                UnprocessableInputError(result);
+            }
         },
         complete: function () {
             loadingButton.button('reset');
@@ -67,6 +85,12 @@ window.editRecordWithForm = function (data, loadingButton, modalSelector = '#Edi
     let formData = (data.formSelector === '') ? data.formData : $(
         data.formSelector).serialize();
     loadingButton.attr('disabled', true);
+    
+    // Clear previous errors before submitting
+    if (data.formSelector && typeof clearAllFieldErrors === 'function') {
+        clearAllFieldErrors(data.formSelector);
+    }
+    
     $.ajax({
         url: data.url,
         type: data.type,
@@ -82,7 +106,12 @@ window.editRecordWithForm = function (data, loadingButton, modalSelector = '#Edi
         },
         error: function (result) {
             loadingButton.attr('disabled', false);
-            UnprocessableInputError(result);
+            // Use enhanced error handling with field-level validation
+            if (typeof handleAjaxValidationErrors === 'function') {
+                handleAjaxValidationErrors(result, data.formSelector);
+            } else {
+                UnprocessableInputError(result);
+            }
         },
         complete: function () {
             loadingButton.button('reset');
