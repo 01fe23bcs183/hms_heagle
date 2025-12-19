@@ -5,7 +5,6 @@ namespace App\Queries;
 use App\Models\Postal;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Route;
-use Route;
 
 /**
  * Class PostalDataTable.

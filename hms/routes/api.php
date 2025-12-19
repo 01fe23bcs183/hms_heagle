@@ -24,6 +24,22 @@ use App\Http\Controllers\API\PrescriptionAPIController;
 use App\Http\Controllers\API\RegistrationController;
 use App\Http\Controllers\API\UserAPIController;
 use App\Http\Controllers\API\VaccinatedPatientAPIController;
+
+// V1 API Controllers
+use App\Http\Controllers\Api\V1\Auth\AuthController as V1AuthController;
+use App\Http\Controllers\Api\V1\Patients\PatientController;
+use App\Http\Controllers\Api\V1\Appointments\AppointmentController;
+use App\Http\Controllers\Api\V1\Doctors\DoctorController;
+use App\Http\Controllers\Api\V1\IPD\IpdController;
+use App\Http\Controllers\Api\V1\OPD\OpdController;
+use App\Http\Controllers\Api\V1\Billing\BillController;
+use App\Http\Controllers\Api\V1\Beds\BedController;
+use App\Http\Controllers\Api\V1\BloodBank\BloodBankController;
+use App\Http\Controllers\Api\V1\Pharmacy\MedicineController;
+use App\Http\Controllers\Api\V1\Pathology\PathologyController;
+use App\Http\Controllers\Api\V1\Radiology\RadiologyController;
+use App\Http\Controllers\Api\V1\Users\UserController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -198,5 +214,133 @@ Route::middleware('auth:sanctum')->group(function () {
         //PayRoll
         Route::get('doctor-payroll', [PayrollAPIController::class, 'index']);
         Route::get('doctor-payroll/{id}', [PayrollAPIController::class, 'show']);
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| V1 API Routes - Service-Oriented Architecture
+|--------------------------------------------------------------------------
+|
+| These routes follow the new service-oriented architecture pattern.
+| All endpoints are prefixed with /api/v1 and use Sanctum authentication.
+| Documentation available at /api/documentation (Swagger UI)
+|
+*/
+
+Route::prefix('v1')->group(function () {
+    // Public authentication routes
+    Route::prefix('auth')->group(function () {
+        Route::post('login', [V1AuthController::class, 'login']);
+    });
+
+    // Protected routes
+    Route::middleware('auth:sanctum')->group(function () {
+        // Authentication
+        Route::prefix('auth')->group(function () {
+            Route::post('logout', [V1AuthController::class, 'logout']);
+            Route::get('me', [V1AuthController::class, 'me']);
+            Route::post('refresh', [V1AuthController::class, 'refresh']);
+            Route::post('change-password', [V1AuthController::class, 'changePassword']);
+        });
+
+        // Patients
+        Route::prefix('patients')->group(function () {
+            Route::get('dropdown', [PatientController::class, 'dropdown']);
+            Route::get('{id}/cases', [PatientController::class, 'cases']);
+            Route::get('{id}/appointments', [PatientController::class, 'appointments']);
+            Route::get('{id}/bills', [PatientController::class, 'bills']);
+            Route::get('{id}/documents', [PatientController::class, 'documents']);
+        });
+        Route::apiResource('patients', PatientController::class);
+
+        // Appointments
+        Route::prefix('appointments')->group(function () {
+            Route::get('today', [AppointmentController::class, 'today']);
+            Route::get('upcoming', [AppointmentController::class, 'upcoming']);
+            Route::get('statistics', [AppointmentController::class, 'statistics']);
+            Route::post('{id}/cancel', [AppointmentController::class, 'cancel']);
+            Route::post('{id}/complete', [AppointmentController::class, 'complete']);
+            Route::post('{id}/reschedule', [AppointmentController::class, 'reschedule']);
+        });
+        Route::apiResource('appointments', AppointmentController::class);
+
+        // Doctors
+        Route::prefix('doctors')->group(function () {
+            Route::get('dropdown', [DoctorController::class, 'dropdown']);
+            Route::get('statistics', [DoctorController::class, 'statistics']);
+            Route::get('{id}/schedules', [DoctorController::class, 'schedules']);
+            Route::get('{id}/appointments', [DoctorController::class, 'appointments']);
+            Route::get('{doctorId}/availability', [AppointmentController::class, 'checkAvailability']);
+        });
+        Route::apiResource('doctors', DoctorController::class);
+
+        // IPD (Inpatient Department)
+        Route::prefix('ipd')->group(function () {
+            Route::get('current', [IpdController::class, 'current']);
+            Route::get('statistics', [IpdController::class, 'statistics']);
+            Route::post('{id}/discharge', [IpdController::class, 'discharge']);
+        });
+        Route::apiResource('ipd', IpdController::class);
+
+        // OPD (Outpatient Department)
+        Route::prefix('opd')->group(function () {
+            Route::get('today', [OpdController::class, 'today']);
+            Route::get('statistics', [OpdController::class, 'statistics']);
+        });
+        Route::apiResource('opd', OpdController::class);
+
+        // Billing
+        Route::prefix('bills')->group(function () {
+            Route::get('unpaid', [BillController::class, 'unpaid']);
+            Route::get('statistics', [BillController::class, 'statistics']);
+            Route::post('{id}/pay', [BillController::class, 'pay']);
+        });
+        Route::apiResource('bills', BillController::class);
+
+        // Beds
+        Route::prefix('beds')->group(function () {
+            Route::get('available', [BedController::class, 'available']);
+            Route::get('dropdown', [BedController::class, 'dropdown']);
+            Route::get('statistics', [BedController::class, 'statistics']);
+        });
+        Route::apiResource('beds', BedController::class);
+
+        // Blood Bank
+        Route::prefix('blood-bank')->group(function () {
+            Route::get('statistics', [BloodBankController::class, 'statistics']);
+            Route::post('{id}/add-bags', [BloodBankController::class, 'addBags']);
+            Route::post('{id}/remove-bags', [BloodBankController::class, 'removeBags']);
+        });
+        Route::apiResource('blood-bank', BloodBankController::class);
+
+        // Pharmacy / Medicines
+        Route::prefix('medicines')->group(function () {
+            Route::get('low-stock', [MedicineController::class, 'lowStock']);
+            Route::get('dropdown', [MedicineController::class, 'dropdown']);
+            Route::get('statistics', [MedicineController::class, 'statistics']);
+            Route::post('{id}/update-stock', [MedicineController::class, 'updateStock']);
+        });
+        Route::apiResource('medicines', MedicineController::class);
+
+        // Pathology
+        Route::prefix('pathology')->group(function () {
+            Route::get('statistics', [PathologyController::class, 'statistics']);
+        });
+        Route::apiResource('pathology', PathologyController::class);
+
+        // Radiology
+        Route::prefix('radiology')->group(function () {
+            Route::get('statistics', [RadiologyController::class, 'statistics']);
+        });
+        Route::apiResource('radiology', RadiologyController::class);
+
+        // Users
+        Route::prefix('users')->group(function () {
+            Route::get('statistics', [UserController::class, 'statistics']);
+            Route::post('{id}/activate', [UserController::class, 'activate']);
+            Route::post('{id}/deactivate', [UserController::class, 'deactivate']);
+        });
+        Route::apiResource('users', UserController::class);
     });
 });

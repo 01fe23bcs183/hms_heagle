@@ -15,7 +15,6 @@ use Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Route;
-use Route;
 
 /**
  * Class EmployeePayrollDataTable.
