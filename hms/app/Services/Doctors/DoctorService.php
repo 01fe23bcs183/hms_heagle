@@ -163,7 +163,7 @@ class DoctorService extends BaseService
     /**
      * Get doctors for dropdown.
      */
-    public function getForDropdown(array $params = []): Collection
+    public function getForDropdown(array $params = [], array $fields = ['id', 'name']): Collection
     {
         $query = Doctor::with('doctorUser')
             ->whereHas('doctorUser', function ($q) {

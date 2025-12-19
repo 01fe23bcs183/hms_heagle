@@ -146,7 +146,7 @@ class PatientService extends BaseService
     /**
      * Get patients for dropdown.
      */
-    public function getForDropdown(array $params = []): Collection
+    public function getForDropdown(array $params = [], array $fields = ['id', 'name']): Collection
     {
         return Patient::with('patientUser')
             ->whereHas('patientUser', function ($q) {

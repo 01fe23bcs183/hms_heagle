@@ -146,7 +146,7 @@ class MedicineService extends BaseService
     /**
      * Get medicines for dropdown.
      */
-    public function getForDropdown(array $params = []): Collection
+    public function getForDropdown(array $params = [], array $fields = ['id', 'name']): Collection
     {
         $query = Medicine::query();
 

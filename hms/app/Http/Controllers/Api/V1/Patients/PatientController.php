@@ -64,7 +64,7 @@ class PatientController extends ApiController
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Patient")),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object")),
      *             @OA\Property(property="message", type="string", example="Patients retrieved successfully"),
      *             @OA\Property(property="meta", type="object",
      *                 @OA\Property(property="current_page", type="integer"),
@@ -126,7 +126,7 @@ class PatientController extends ApiController
      *         description="Patient created successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="data", ref="#/components/schemas/Patient"),
+     *             @OA\Property(property="data", type="object"),
      *             @OA\Property(property="message", type="string", example="Patient created successfully")
      *         )
      *     ),
@@ -170,7 +170,7 @@ class PatientController extends ApiController
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="data", ref="#/components/schemas/Patient"),
+     *             @OA\Property(property="data", type="object"),
      *             @OA\Property(property="message", type="string", example="Patient retrieved successfully")
      *         )
      *     ),
@@ -223,7 +223,7 @@ class PatientController extends ApiController
      *         description="Patient updated successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="data", ref="#/components/schemas/Patient"),
+     *             @OA\Property(property="data", type="object"),
      *             @OA\Property(property="message", type="string", example="Patient updated successfully")
      *         )
      *     ),
