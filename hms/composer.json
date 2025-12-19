@@ -12,6 +12,7 @@
         "php": "^8.1",
         "ext-json": "*",
         "barryvdh/laravel-dompdf": "^2.0",
+        "darkaonline/l5-swagger": "^8.6",
         "doctrine/dbal": "^3.5",
         "firebase/php-jwt": "^5.2",
         "google/apiclient": "^2.14",
